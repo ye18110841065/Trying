@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>Web3 未来</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: linear-gradient(135deg, #191e29 0%, #1f5373 100%);
+      color: #fff;
+      font-family: 'Montserrat', 'Arial', sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      margin-top: 40px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 3rem;
+      background: linear-gradient(90deg, #36d1dc 0%, #5b86e5 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 4px 24px #0ff2fa60;
+      letter-spacing: 2px;
+    }
+    .gradient-underline {
+      width: 90px;
+      height: 5px;
+      border-radius: 2.5px;
+      margin: 16px auto 0 auto;
+      background: linear-gradient(90deg, #36d1dc 0%, #5b86e5 100%);
+    }
+    .web3-card {
+      background: rgba(34,43,69,0.88);
+      border: 1px solid #2ae1f7;
+      border-radius: 16px;
+      box-shadow: 0 6px 30px #21cfcf40;
+      padding: 38px 28px;
+      margin: 48px 0 12px 0;
+      max-width: 440px;
+      width: 94vw;
+    }
+    .web3-icon {
+      font-size: 3rem;
+      color: #30eaff;
+      margin-bottom: 18px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 16px;
+    }
+    li {
+      margin: 14px 0;
+      display: flex;
+      align-items: center;
+      font-size: 1.13rem;
+    }
+    .check {
+      margin-right: 10px;
+      color: #2ae1f7;
+      font-size: 1.3em;
+    }
+    button {
+      margin-top: 18px;
+      background: linear-gradient(90deg,#36d1dc,#5b86e5);
+      color: #fff;
+      padding: 12px 34px;
+      border: none;
+      border-radius: 100px;
+      font-size: 1.13rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 18px #30eaff33;
+    }
+    button:hover {
+      transform: scale(1.07);
+      box-shadow: 0 8px 32px #30eaff66;
+    }
+    .wallet-address {
+      margin-top: 20px;
+      word-break: break-all;
+      font-family: 'Roboto Mono', monospace;
+      color: #efefef;
+      background: #23304e;
+      padding: 8px 13px;
+      border-radius: 8px;
+      display: inline-block;
+      font-size: 1rem;
+      letter-spacing: 1px;
+    }
+    footer {
+      margin-top: auto;
+      color: #7beffb;
+      font-size: 0.98rem;
+      padding: 20px 0 14px 0;
+      text-align: center;
+    }
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+      .web3-card {
+        padding: 22px 12px;
+        max-width: 99vw;
+      }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Web3 新纪元</h1>
+    <div class="gradient-underline"></div>
+    <p style="color:#7beffb;margin-top:14px;letter-spacing:1px;">去中心化，赋能未来互联网</p>
+  </header>
+
+  <div class="web3-card" id="content-card">
+    <div class="web3-icon">
+      <svg viewBox="0 0 40 40" width="42" height="42" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="20" r="20" fill="#21cfcf" opacity="0.13"/>
+        <path d="M20 6L22.5 18.3333H32L24 23.6667L26.5 36L20 29.3333L13.5 36L16 23.6667L8 18.3333H17.5L20 6Z" fill="#2ae1f7"/>
+      </svg>
+    </div>
+    <ul>
+      <li><span class="check">✔</span>链上身份，与众不同</li>
+      <li><span class="check">✔</span>钱包连接，畅游DApp世界</li>
+      <li><span class="check">✔</span>资产透明安全，自主掌控</li>
+    </ul>
+    <button id="connectBtn">连接钱包</button>
+    <div id="walletArea"></div>
+  </div>
+
+  <footer>
+    Copyright © 2024 Web3 未来. Powered by 区块链技术.
+  </footer>
+  <script>
+    const connectBtn = document.getElementById('connectBtn');
+    const walletArea = document.getElementById('walletArea');
+
+    async function connectWallet() {
+      if (typeof window.ethereum === 'undefined') {
+        walletArea.innerHTML = '<div style="color:#ec5656;margin-top:16px;">请先安装 <a href="https://metamask.io/" target="_blank" style="color:#36d1dc;text-decoration:underline;">MetaMask</a> 插件</div>';
+        return;
+      }
+
+      try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const address = await signer.getAddress();
+        walletArea.innerHTML = `<div class="wallet-address" title="钱包地址">${address}</div>`;
+        connectBtn.textContent = "已连接钱包";
+        connectBtn.disabled = true;
+        connectBtn.style.opacity = 0.7;
+      } catch (err) {
+        walletArea.innerHTML = `<div style="color:#ec5656;margin-top:12px;">用户取消了连接请求</div>`;
+      }
+    }
+
+    connectBtn.onclick = connectWallet;
+  </script>
+</body>
+</html>
